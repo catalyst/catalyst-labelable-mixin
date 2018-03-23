@@ -1,0 +1,15 @@
+/tmp/
+/dist/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Docs
+/docs/
+/analysis.json
+
+# Symlinks
+/catalyst-labelable-mixin.js
+/catalyst-labelable-mixin.es5.min.js

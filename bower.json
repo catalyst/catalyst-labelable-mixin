@@ -1,0 +1,7 @@
+{
+  "name": "@catalyst-elements/catalyst-labelable-mixin",
+  "description": "A mixin that makes an element labelable.",
+  "authors": ["Rebecca Stevens <rebeccastevens@catalyst.net.nz>"],
+  "keywords": ["web-components", "mixin", "labelable"],
+  "homepage": "https://github.com/catalyst/catalyst-labelable-mixin"
+}

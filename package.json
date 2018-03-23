@@ -1,0 +1,71 @@
+{
+  "name": "@catalyst-elements/catalyst-labelable-mixin",
+  "license": "BSD-3-Clause",
+  "version": "0.0.0",
+  "description": "A mixin that makes an element labelable.",
+  "main": "src/mixin.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catalyst/catalyst-labelable-mixin.git"
+  },
+  "author": {
+    "name": "Rebecca Stevens",
+    "email": "rebeccastevens@catalyst.net.nz"
+  },
+  "keywords": [
+    "web-components",
+    "mixin",
+    "labelable"
+  ],
+  "bugs": {
+    "url": "https://github.com/catalyst/catalyst-labelable-mixin/issues"
+  },
+  "homepage": "https://github.com/catalyst/catalyst-labelable-mixin#readme",
+  "scripts": {
+    "format": "./node_modules/.bin/prettier-eslint --write \"{{src,test,demo,tasks}/**/*.{js,css,scss},./*.{js,json,md}}\"",
+    "format:check": "./node_modules/.bin/prettier-eslint --list-different \"{{src,test,demo,tasks}/**/*.{js,css,scss},./*.{js,json,md}}\"",
+    "build": "./node_modules/.bin/gulp build",
+    "analyze": "./node_modules/.bin/gulp analyze",
+    "build-docs": "./node_modules/.bin/gulp build-docs",
+    "lint": "./node_modules/.bin/gulp lint",
+    "serve": "./node_modules/.bin/polyserve --npm",
+    "postinstall": "./node_modules/.bin/gulp fix-dependencies",
+    "prepublishOnly": "echo \"Error: must publish from dist/\" && exit 1"
+  },
+  "devDependencies": {
+    "@polymer/iron-component-page": "^3.0.0-pre.1",
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.1",
+    "@polymer/test-fixture": "^3.0.0-pre.1",
+    "@webcomponents/shadycss": "^1.1.1",
+    "@webcomponents/webcomponentsjs": "^1.1.0",
+    "babel-eslint": "^8.2.1",
+    "del": "^3.0.0",
+    "eslint": "^4.18.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.7.0",
+    "graceful-fs": "^4.1.11",
+    "gulp": "^4.0.0",
+    "gulp-eslint": "^4.0.1",
+    "gulp-file": "^0.4.0",
+    "gulp-foreach": "^0.1.0",
+    "gulp-inject": "^4.3.1",
+    "gulp-modify-file": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "marked": "^0.3.12",
+    "merge-stream": "^1.0.1",
+    "polymer-analyzer": "^v3.0.0-pre.12",
+    "polymer-build": "^2.1.1",
+    "polyserve": "^0.24.0",
+    "prettier": "^1.11.1",
+    "prettier-eslint-cli": "^4.7.1",
+    "prismjs": "^1.11.0",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^4.0.1",
+    "webpack-closure-compiler": "^2.1.6",
+    "webpack-stream": "^4.0.1"
+  },
+  "engines": {
+    "yarn": ">= 1.0.0"
+  }
+}
