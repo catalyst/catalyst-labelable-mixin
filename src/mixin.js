@@ -80,13 +80,13 @@ const catalystLabelableMixin = MixWith => {
       // Ensure the first character isn't a number by adding a prefix to the UUID.
       const id = `catid-${uuid}`;
 
-      // Check that there is no other node in this document with this UUID.
+      // Check that there is no other node in this document with this id.
       const root = this.getRootNode();
       if (root != null && root.querySelector(`#${id}`) == null) {
         return id;
       }
 
-      // UUID isn't unique? Generate a new one.
+      // Id isn't unique? Generate a new one.
       return this.generateNewLabelId();
     }
 
