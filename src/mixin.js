@@ -60,7 +60,7 @@ const catalystLabelableMixin = MixWith => {
     /**
      * Generate a new id for a label element.
      *
-     * @private
+     * @protected
      * @returns {string}
      */
     generateNewLabelId() {
