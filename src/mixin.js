@@ -158,5 +158,4 @@ const catalystLabelableMixin = MixWith => {
   };
 };
 
-export default catalystLabelableMixin;
 export { catalystLabelableMixin };
