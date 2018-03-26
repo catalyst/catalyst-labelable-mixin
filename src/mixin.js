@@ -1,6 +1,7 @@
 /* eslint "class-methods-use-this": ['warn', { "exceptMethods": ["onLabelClick"] }] */
 
 const mixinId = Symbol('CatalystLabelableMixinID');
+const labelClickEventListener = Symbol('labelClickEventListener');
 
 /**
  * `<catalyst-labelable-mixin>` is a mix in funcation that retruns a class that extends the given super class.
@@ -31,6 +32,8 @@ const catalystLabelableMixin = MixWith => {
     constructor() {
       super();
       this[mixinId] = true;
+
+      this[labelClickEventListener] = this.onLabelClick.bind(this);
     }
 
     /**
@@ -113,7 +116,7 @@ const catalystLabelableMixin = MixWith => {
           }
           labelledBy.push(label.id);
 
-          label.addEventListener('click', this.onLabelClick);
+          label.addEventListener('click', this[labelClickEventListener]);
         }
         this.setAttribute('aria-labelledby', labelledBy.join(' '));
       }
@@ -135,7 +138,7 @@ const catalystLabelableMixin = MixWith => {
 
       if (labels && labels.length > 0) {
         for (const label of labels) {
-          label.removeEventListener('click', this.onLabelClick);
+          label.removeEventListener('click', this[labelClickEventListener]);
         }
       }
       this.removeAttribute('aria-labelledby');
