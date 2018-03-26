@@ -1,7 +1,7 @@
 /* eslint "class-methods-use-this": ['warn', { "exceptMethods": ["onLabelClick"] }] */
 
 const mixinId = Symbol('CatalystLabelableMixinID');
-const labelClickEventListener = Symbol('labelClickEventListener');
+const labelClickEventListener = Symbol("each label's click event listener");
 
 /**
  * `<catalyst-labelable-mixin>` is a mix in funcation that retruns a class that extends the given super class.
