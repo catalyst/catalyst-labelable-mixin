@@ -1,3 +1,4 @@
+/.tmp/
 /tmp/
 /dist/
 
@@ -11,5 +12,4 @@ yarn-error.log
 /analysis.json
 
 # Symlinks
-/catalyst-labelable-mixin.js
-/catalyst-labelable-mixin.es5.min.js
+/catalyst-labelable-mixin.*js

@@ -1,9 +1,18 @@
 /* eslint-env node */
 
-require('./tasks/clean.js');
+const gulp = require('gulp');
+const buildProcess = require('@catalyst-elements/build-process');
 
-require('./tasks/build.js'); // Task: build
-require('./tasks/analyze'); // Task: analyze
-require('./tasks/docs.js'); // Task: build-docs
-require('./tasks/lint.js'); // Task: lint
-require('./tasks/fix-dependencies.js'); // Task: fix-dependencies
+buildProcess.setConfig('./package.json', {
+  componenet: {
+    name: 'catalyst-labelable-mixin'
+  },
+
+  src: {
+    entrypoint: 'mixin.mjs'
+  }
+});
+
+for (const [taskName, taskFunction] of Object.entries(buildProcess.tasks)) {
+  gulp.task(taskName, taskFunction(gulp));
+}

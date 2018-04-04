@@ -1,19 +1,12 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "extends": ["catalyst", "plugin:prettier/recommended"],
   "env": {
-    "browser": true,
-    "mocha": true,
-    "es6": true
+    "mocha": true
   },
-  "parserOptions": {
-    "ecmaVersion": 9,
-    "sourceType": "module"
-  },
-  "plugins": ["promise", "prettier"],
+  "plugins": ["prettier"],
   "globals": {
-    "Promise": false,
     "ShadyCSS": false,
     "expect": false,
     "should": false,
@@ -22,29 +15,37 @@
     "WCT": false
   },
   "rules": {
-    "quotes": [
-      "error",
-      "single",
+    "curly": ["error", "all"],
+    "lines-around-comment": [
+      "warn",
       {
-        "avoidEscape": true,
-        "allowTemplateLiterals": true
+        "beforeBlockComment": true,
+        "afterBlockComment": false,
+        "beforeLineComment": true,
+        "afterLineComment": false,
+        "allowBlockStart": true,
+        "allowBlockEnd": true,
+        "allowObjectStart": true,
+        "allowObjectEnd": true,
+        "allowArrayStart": true,
+        "allowArrayEnd": true,
+        "allowClassStart": true,
+        "allowClassEnd": true
       }
     ],
-    "no-console": [
-      "error",
+    "max-len": [
+      "warn",
       {
-        "allow": ["warn", "error"]
+        "code": 80,
+        "comments": 120,
+        "tabWidth": 2,
+        "ignoreUrls": true,
+        "ignoreComments": false,
+        "ignoreTrailingComments": false,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
       }
-    ],
-    "promise/always-return": "off",
-    "promise/avoid-new": "off",
-    "promise/catch-or-return": "off",
-    "promise/no-callback-in-promise": "warn",
-    "promise/no-native": "off",
-    "promise/no-nesting": "warn",
-    "promise/no-promise-in-callback": "off",
-    "promise/no-return-in-finally": "warn",
-    "promise/no-return-wrap": "error",
-    "promise/param-names": "warn"
+    ]
   }
 }

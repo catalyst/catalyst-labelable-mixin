@@ -10,5 +10,5 @@
     }
   });
 
-  import('./docs-imports.js');
+  import('./docs-imports');
 })();

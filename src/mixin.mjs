@@ -1,5 +1,3 @@
-/* eslint "class-methods-use-this": ['warn', { "exceptMethods": ["onLabelClick"] }] */
-
 const mixinId = Symbol('CatalystLabelableMixinID');
 const labelClickEventListener = Symbol("each label's click event listener");
 
