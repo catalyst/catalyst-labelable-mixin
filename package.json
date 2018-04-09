@@ -31,10 +31,12 @@
     "lint": "./node_modules/.bin/gulp lint",
     "serve": "./node_modules/.bin/polyserve --npm",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "do-publish": "./node_modules/.bin/gulp lint && ./node_modules/.bin/gulp build && ./node_modules/.bin/gulp publish",
     "postinstall": "./node_modules/.bin/gulp fix-dependencies",
-    "prepublishOnly": "echo \"Error: must publish from dist/\" && exit 1"
+    "prepublishOnly": "echo \"Error: use the 'do-publish' script to publish.\" && exit 1"
   },
   "devDependencies": {
+    "@catalyst-elements/build-process": "^0.2.10",
     "@polymer/iron-component-page": "^3.0.0-pre.1",
     "@polymer/iron-demo-helpers": "^3.0.0-pre.1",
     "@polymer/test-fixture": "^3.0.0-pre.1",
