@@ -8,6 +8,11 @@ buildProcess.setConfig('./package.json', {
     name: 'catalyst-labelable-mixin'
   },
 
+  publish: {
+    masterBranch: 'master',
+    prereleaseBranchRegex: /^external-build-process$/g
+  },
+
   src: {
     entrypoint: 'mixin.mjs'
   }
