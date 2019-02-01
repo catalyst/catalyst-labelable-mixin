@@ -1,7 +1,0 @@
-# node_modules are automatically ignored
-
-/docs/
-/dist/
-/tmp/
-/catalyst-labelable-mixin.js
-/catalyst-labelable-mixin.es5.min.js

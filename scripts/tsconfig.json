@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+
+    // Coding style
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    // Output
+    "noEmitOnError": true,
+    "module": "commonjs",
+    "target": "es5",
+    "removeComments": true,
+    "isolatedModules": false
+  },
+  "include": ["**/*.ts"]
+}

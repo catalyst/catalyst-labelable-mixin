@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true,
+
+    // Coding style
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "newLine": "LF",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+
+    // Output
+    "module": "esnext",
+    "target": "es2017",
+    "sourceMap": false,
+    "removeComments": false,
+    "isolatedModules": false,
+
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "docs-src/**/*.ts",
+    "custom_typings/**/*.d.ts"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "isolatedModules": false
+  },
+  "include": [
+    "**/*.ts",
+    "../custom_typings/**/*.d.ts"
+  ]
+}
