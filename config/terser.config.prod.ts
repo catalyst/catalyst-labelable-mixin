@@ -1,7 +1,6 @@
 /**
  * Terser Config.
  */
-// @ts-check
 
 const defaultConfig = {
   compress: {
