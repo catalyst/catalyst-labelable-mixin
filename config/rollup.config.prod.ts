@@ -49,11 +49,12 @@ export const esmConfig: RollupOptions = {
     rollupPluginTypescript(),
     rollupPluginBabel({
       babelrc: false,
+      extensions: ['.js', '.mjs', '.ts'],
       ...babelConfigModule
     }),
     rollupPluginTerser(terserConfigModule),
     rollupPluginPrettier({
-      parser: 'babylon'
+      parser: 'babel'
     })
   ]
 };
@@ -78,6 +79,7 @@ export const iifeConfig: RollupOptions = {
     rollupPluginTypescript(),
     rollupPluginBabel({
       babelrc: false,
+      extensions: ['.js', '.mjs', '.ts'],
       ...babelConfigScript
     }),
     rollupPluginTerser(terserConfigScript)
