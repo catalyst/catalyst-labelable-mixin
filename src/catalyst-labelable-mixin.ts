@@ -115,10 +115,9 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
       // tslint:disable-next-line: no-magic-numbers
       const uuid = `${1e7}-${1e3}-${4e3}-${8e3}-${1e11}`.replace(/[018]/g, (character) => {
         const digit = Number.parseInt(character, 10);
-        return (
-            // tslint:disable-next-line: no-bitwise no-magic-numbers
-            digit ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (digit / 4)))
-          ).toString(16);
+
+        // tslint:disable: no-bitwise no-magic-numbers
+        return (digit ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (digit / 4)))).toString(16);
         }
       );
 
