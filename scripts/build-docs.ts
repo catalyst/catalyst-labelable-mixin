@@ -18,8 +18,8 @@ process.on('unhandledRejection', (error) => {
   throw error;
 });
 
-import { load as cheerioLoad } from 'cheerio';
 import del from 'del';
+import { render as renderEjs } from 'ejs';
 import { copy, ensureSymlink, outputFile, readFile } from 'fs-extra';
 import { minify as minifyHTML } from 'html-minifier';
 import JSON5 from 'json5';
@@ -31,9 +31,8 @@ import { minify as minifyJS } from 'terser';
 import { promisify } from 'util';
 import webpack from 'webpack';
 
-import packageJson from '../package.json';
-
 import { minScript as terserConfigScript } from '../config/terser.config.prod';
+import packageJson from '../package.json';
 
 const renderSass = promisify<SassOptions, SassResult>(renderSassCbf);
 
@@ -251,66 +250,48 @@ async function compileHTML(
     readonly files: ReadonlyArray<string>;
   }
 ): Promise<void> {
-  const indexHTML = await readFile(resolvePath(process.cwd(), tempFolder, 'index.html'), 'utf-8');
-  const $ = cheerioLoad(indexHTML);
 
-  $('place-holder#__meta-description')
-    .replaceWith(`<meta name="description" content="Documentation for the the catalyst-labelable-mixin.">`);
-
-  $('place-holder#__title')
-    .replaceWith(`<title>catalyst-labelable-mixin Docs</title>`);
-
-  $('place-holder#__style')
-    .replaceWith(`<style>${inlineCss}</style>`);
-
-  const polyfillTags = polyfillFiles.map((file) => {
-    return `<script src="${file}" defer></script>`;
+  const modulesPreloadTags = preloadFiles.modules.map((file) => {
+    return `<link rel="modulepreload" href="${file}">`;
+  });
+  const scriptsPreloadTags = preloadFiles.scripts.map((file) => {
+    return `<link rel="preload" href="${file}" as="script">`;
+  });
+  const filesPreloadTags = preloadFiles.files.map((file) => {
+    return `<link rel="preload" href="${file}" as="fetch">`;
   });
 
-  $('place-holder#__scripts-polyfills')
-    .replaceWith(polyfillTags.join('\n  '));
+  const preloadTags: ReadonlyArray<string> = [
+    ...modulesPreloadTags,
+    ...scriptsPreloadTags,
+    ...filesPreloadTags
+  ];
 
-  $('place-holder#__module-main')
-  .replaceWith(`<script type="module" src="${mainModule}" defer></script>`);
+  const description = 'Documentation for the the catalyst-labelable-mixin.';
+  const title = 'catalyst-labelable-mixin Docs';
 
-  if (production) {
-    $('place-holder#__script-main')
-      .replaceWith(`<script nomodule src="${mainScript}" defer></script>`);
+  const es5AdapterLoaderScript =
+    production
+      ? (await readFile(resolvePath(process.cwd(), tempFolder, 'es5-adapter-loader.js'), 'utf-8')).trim()
+      : '';
 
-    const es5AdapterLoaderScript = (await readFile(resolvePath(process.cwd(), tempFolder, 'es5-adapter-loader.js'), 'utf-8')).trim();
+  const indexHtmlEjs = await readFile(resolvePath(process.cwd(), tempFolder, 'index.html.ejs'), 'utf-8');
 
-    $('place-holder#__script-es5-adapter-loader')
-      .replaceWith(`<script id="es5-adapter-loader" nomodule>${es5AdapterLoaderScript}</script>`);
-
-    const modulesPreloadTags = preloadFiles.modules.map((file) => {
-      return `<link rel="modulepreload" href="${file}">`;
-    });
-    const scriptsPreloadTags = preloadFiles.scripts.map((file) => {
-      return `<link rel="preload" href="${file}" as="script">`;
-    });
-    const filesPreloadTags = preloadFiles.files.map((file) => {
-      return `<link rel="preload" href="${file}" as="fetch">`;
-    });
-
-    const preloadTags: ReadonlyArray<string> = [
-      ...modulesPreloadTags,
-      ...scriptsPreloadTags,
-      ...filesPreloadTags
-    ];
-
-    $('place-holder#__preloads')
-      .replaceWith(preloadTags.join('\n  '));
-  } else {
-    // tslint:disable: newline-per-chained-call
-    $('place-holder#__script-main').remove();
-    $('place-holder#__script-es5-adapter-loader').remove();
-    $('place-holder#__preloads').remove();
-    // tslint:enable: newline-per-chained-call
-  }
+  const indexHTML = renderEjs(indexHtmlEjs, {
+    production,
+    title,
+    description,
+    mainModuleSrc: mainModule,
+    mainScriptSrc: mainScript,
+    preloadTags,
+    es5AdapterLoaderScript,
+    polyfillScriptsSrc: polyfillFiles,
+    style: inlineCss
+  }, {});
 
   const output =
     production
-      ? minifyHTML($.html(), {
+      ? minifyHTML(indexHTML, {
         collapseBooleanAttributes: true,
         collapseWhitespace: true,
         minifyCSS: true,
@@ -324,7 +305,7 @@ async function compileHTML(
         sortClassName: true,
         useShortDoctype: true
       })
-      : $.html();
+      : indexHTML;
 
   await outputFile(
     resolvePath(process.cwd(), docsDistFolder, 'index.html'),
