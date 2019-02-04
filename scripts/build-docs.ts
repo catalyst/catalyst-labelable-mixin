@@ -27,18 +27,13 @@ import { Options as SassOptions, render as renderSassCbf, Result as SassResult }
 import { resolve as resolvePath } from 'path';
 import postcss from 'postcss';
 import { rollup, RollupOptions } from 'rollup';
+import { minify as minifyJS } from 'terser';
 import { promisify } from 'util';
 import webpack from 'webpack';
-import colorGuard from 'colorguard';
-import postcssContainerQueryProlyfill from 'cq-prolyfill/postcss-plugin';
-import cssMediaQueryPacker from 'css-mqpacker';
-import cssnano from 'cssnano';
-import postcssFontMagician from 'postcss-font-magician';
-import postcssImport from 'postcss-import';
-import postcssPresetEnv from 'postcss-preset-env';
-import postcssReporter from 'postcss-reporter';
 
 import packageJson from '../package.json';
+
+import { minScript as terserConfigScript } from '../config/terser.config.prod';
 
 const renderSass = promisify<SassOptions, SassResult>(renderSassCbf);
 
@@ -81,9 +76,6 @@ async function buildDocsProduction(): Promise<void> {
   await buildDocs(true);
 }
 
-/**
- * Build the docs.
- */
 async function buildDocs(production: boolean): Promise<void> {
   await del(tempFolder);
   await del(docsDistFolder);
@@ -165,8 +157,8 @@ async function compile(production: boolean): Promise<void> {
       return rollupBuild.write(config.output);
     })
   );
-
-  const preloadModuleFiles = buildOutputs[0].output.reduce((r, output) => [...r, output.fileName], []);
+  const moduleFiles = buildOutputs[0].output.reduce((r, output) => [...r, output.fileName], []);
+  const mainModule = moduleFiles[0];
 
   // Rollup can't current generate iife when the source code uses dynamic imports.
   // WebPack is used instead to generate the es5 version of the docs.
@@ -179,6 +171,9 @@ async function compile(production: boolean): Promise<void> {
   const runCompiler = promisify(compiler.run.bind(compiler) as typeof compiler.run);
   const stats = await runCompiler();
 
+  const statsData = stats.toJson('normal');
+  const mainScript = statsData.assetsByChunkName.main as string;
+
   console.info(
     stats.toString({
       chunks: false,
@@ -186,79 +181,173 @@ async function compile(production: boolean): Promise<void> {
     })
   );
 
-  await compileCSS();
-  await compileHTML(preloadModuleFiles);
-}
+  const polyfillSrcFiles: ReadonlyArray<string> = [
+    '@webcomponents/webcomponentsjs/webcomponents-loader.js',
+    '@webcomponents/shadycss/scoping-shim.min.js'
+  ];
+  const polyfillSrcFilesAssets: ReadonlyArray<string> = [
+    '@webcomponents/webcomponentsjs/bundles',
+    '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'
+  ];
 
-async function compileHTML(preloadModules: ReadonlyArray<string>): Promise<void> {
-  const indexHTML = await readFile(resolvePath(process.cwd(), tempFolder, 'index.html'), 'utf-8');
-  const $ = cheerioLoad(indexHTML);
+  const polyfillDistFiles = polyfillSrcFiles.map((file) => `vender/${file}`);
 
-  preloadModules.forEach((file) => {
-    $('head')
-      .prepend(`<link rel="modulepreload" href="${file}">`);
-  });
+  const copyPolyfillSrcFileAssets = polyfillSrcFilesAssets.map(async (file) => copy(
+    resolvePath(process.cwd(), tempFolder, nodeModules, file),
+    resolvePath(process.cwd(), docsDistFolder, 'vender/', file)
+  ));
 
-  // Inline css
-  const css = await readFile(resolvePath(process.cwd(), tempFolder, 'style.css'), 'utf-8');
-  $('head')
-    .append(`<style>${css}</style>`);
+  if (production) {
+    await Promise.all([
+      ...polyfillSrcFiles.map(async (file, i) => {
+        const js = await readFile(resolvePath(process.cwd(), tempFolder, nodeModules, file), 'utf-8');
 
-  await outputFile(
-    resolvePath(process.cwd(), docsDistFolder, 'index.html'),
-    minifyHTML($.html(), {
-      collapseBooleanAttributes: true,
-      collapseWhitespace: true,
-      minifyCSS: true,
-      minifyJS: true,
-      removeComments: true,
-      removeOptionalTags: true,
-      removeRedundantAttributes: true,
-      removeScriptTypeAttributes: true,
-      removeStyleLinkTypeAttributes: true,
-      sortAttributes: true,
-      sortClassName: true,
-      useShortDoctype: true
-    })
+        const minifiedJS = minifyJS(js, terserConfigScript).code;
+
+        await outputFile(
+          resolvePath(process.cwd(), docsDistFolder, polyfillDistFiles[i]),
+          minifiedJS
+        );
+      }),
+
+      ...copyPolyfillSrcFileAssets
+    ]);
+  } else {
+    await Promise.all([
+      ...polyfillSrcFiles.map(async (file, i) => copy(
+        resolvePath(process.cwd(), tempFolder, nodeModules, file),
+        resolvePath(process.cwd(), docsDistFolder, polyfillDistFiles[i])
+      )),
+
+      ...copyPolyfillSrcFileAssets
+    ]);
+
+  }
+
+  const css = await compileCSS(production);
+  await compileHTML(
+    production,
+    mainModule,
+    mainScript,
+    polyfillDistFiles,
+    css,
+    {
+       modules: moduleFiles,
+       scripts: polyfillDistFiles,
+       files: ['analysis.json']
+    }
   );
 }
 
-async function compileCSS(): Promise<void> {
+async function compileHTML(
+  production: boolean,
+  mainModule: string,
+  mainScript: string,
+  polyfillFiles: ReadonlyArray<string>,
+  inlineCss: string,
+  preloadFiles: {
+    readonly modules: ReadonlyArray<string>;
+    readonly scripts: ReadonlyArray<string>;
+    readonly files: ReadonlyArray<string>;
+  }
+): Promise<void> {
+  const indexHTML = await readFile(resolvePath(process.cwd(), tempFolder, 'index.html'), 'utf-8');
+  const $ = cheerioLoad(indexHTML);
+
+  $('place-holder#__meta-description')
+    .replaceWith(`<meta name="description" content="Documentation for the the catalyst-labelable-mixin.">`);
+
+  $('place-holder#__title')
+    .replaceWith(`<title>catalyst-labelable-mixin Docs</title>`);
+
+  $('place-holder#__style')
+    .replaceWith(`<style>${inlineCss}</style>`);
+
+  const polyfillTags = polyfillFiles.map((file) => {
+    return `<script src="${file}" defer></script>`;
+  });
+
+  $('place-holder#__scripts-polyfills')
+    .replaceWith(polyfillTags.join('\n  '));
+
+  $('place-holder#__module-main')
+  .replaceWith(`<script type="module" src="${mainModule}" defer></script>`);
+
+  if (production) {
+    $('place-holder#__script-main')
+      .replaceWith(`<script nomodule src="${mainScript}" defer></script>`);
+
+    const es5AdapterLoaderScript = (await readFile(resolvePath(process.cwd(), tempFolder, 'es5-adapter-loader.js'), 'utf-8')).trim();
+
+    $('place-holder#__script-es5-adapter-loader')
+      .replaceWith(`<script id="es5-adapter-loader" nomodule>${es5AdapterLoaderScript}</script>`);
+
+    const modulesPreloadTags = preloadFiles.modules.map((file) => {
+      return `<link rel="modulepreload" href="${file}">`;
+    });
+    const scriptsPreloadTags = preloadFiles.scripts.map((file) => {
+      return `<link rel="preload" href="${file}" as="script">`;
+    });
+    const filesPreloadTags = preloadFiles.files.map((file) => {
+      return `<link rel="preload" href="${file}" as="fetch">`;
+    });
+
+    const preloadTags: ReadonlyArray<string> = [
+      ...modulesPreloadTags,
+      ...scriptsPreloadTags,
+      ...filesPreloadTags
+    ];
+
+    $('place-holder#__preloads')
+      .replaceWith(preloadTags.join('\n  '));
+  } else {
+    // tslint:disable: newline-per-chained-call
+    $('place-holder#__script-main').remove();
+    $('place-holder#__script-es5-adapter-loader').remove();
+    $('place-holder#__preloads').remove();
+    // tslint:enable: newline-per-chained-call
+  }
+
+  const output =
+    production
+      ? minifyHTML($.html(), {
+        collapseBooleanAttributes: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: true,
+        removeComments: true,
+        removeOptionalTags: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        sortAttributes: true,
+        sortClassName: true,
+        useShortDoctype: true
+      })
+      : $.html();
+
+  await outputFile(
+    resolvePath(process.cwd(), docsDistFolder, 'index.html'),
+    output
+  );
+}
+
+async function compileCSS(production: boolean): Promise<string> {
   const css = (await renderSass({
       file: resolvePath(process.cwd(), tempFolder, 'style.scss'),
       outputStyle: 'expanded'
     }))
       .css.toString('utf8');
 
-  // tslint:disable: await-promise no-unsafe-any
-  const processedCss = await postcss([
-    postcssImport(),
-    postcssContainerQueryProlyfill(),
-    postcssFontMagician(),
-    postcssPresetEnv({
-      stage: 2,
-      browsers: ['last 5 versions', '>= 1%', 'ie >= 11'],
-      features: {
-        'custom-properties': false
-      }
-    }),
-    cssMediaQueryPacker(),
-    colorGuard(),
-    cssnano({
-      autoprefixer: false,
-      discardComments: {
-        removeAll: true
-      }
-    }),
-    postcssReporter()
-  ])
-    .process(css, {});
-  // tslint:enable: await-promise no-unsafe-any
+  const postcssConfig =
+    production
+      ? (await import('../config/postcss.config.prod')).default
+      : (await import('../config/postcss.config.dev')).default;
 
-  const finalizedCss = processedCss.css.replace(/\n/g, '');
+  const processedCss = (await (
+    postcss(postcssConfig.plugins)
+      .process(css, postcssConfig.options) as PromiseLike<postcss.Result>
+  )).css;
 
-  await outputFile(
-    resolvePath(process.cwd(), tempFolder, 'style.css'),
-    finalizedCss
-  );
+  return processedCss.replace(/\n/g, '');
 }

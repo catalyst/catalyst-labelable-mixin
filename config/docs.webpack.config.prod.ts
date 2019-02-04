@@ -1,7 +1,9 @@
 import { resolve as resolvePath } from 'path';
+import WebpackPluginTerser from 'terser-webpack-plugin';
 import { Configuration } from 'webpack';
 
 import babelOptions from './babel.config.script.prod';
+import { minScript as terserConfig } from './terser.config.prod';
 
 // Relative to root/cwd.
 const tempFolder = '.tmp/docs';
@@ -13,7 +15,7 @@ const config: Configuration = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.ts$/,
         use: [
           {
             loader: 'babel-loader',
@@ -35,7 +37,14 @@ const config: Configuration = {
   resolve: {
     extensions: ['.js', '.ts']
   },
-  target: 'web'
+  target: 'web',
+  optimization: {
+    minimizer: [
+      new WebpackPluginTerser({
+        terserOptions: terserConfig
+      })
+    ]
+  }
 };
 
 export default config;

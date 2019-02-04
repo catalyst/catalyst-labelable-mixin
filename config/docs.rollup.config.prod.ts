@@ -5,11 +5,11 @@
 import { RollupOptions } from 'rollup';
 import rollupPluginBabel from 'rollup-plugin-babel';
 import rollupPluginCommonjs from 'rollup-plugin-commonjs';
-import rollupPluginCopyAssets from 'rollup-plugin-copy-assets';
 import rollupPluginNodeResolve from 'rollup-plugin-node-resolve';
 import { terser as rollupPluginTerser } from 'rollup-plugin-terser';
 import rollupPluginTypescript from 'rollup-plugin-typescript';
 
+import babelConfigModule from './babel.config.module.prod';
 import babelConfigScript from './babel.config.script.prod';
 import {
   minModule,
@@ -37,31 +37,33 @@ export const moduleConfig: RollupOptions = {
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
     rollupPluginTypescript(),
+    rollupPluginBabel({
+      babelrc: false,
+      extensions: ['.js', '.mjs', '.ts'],
+      ...babelConfigModule
+    }),
     rollupPluginTerser(minModule)
   ]
 };
 
-export const webcomponentsConfig: RollupOptions = {
+export const es5AdapterLoader: RollupOptions = {
 
-  input: 'node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js',
+  input: '.tmp/docs/es5-adapter-loader.ts',
 
   output: {
-    dir: 'docs/vender/webcomponents',
-    entryFileNames: '[name].min.js',
+    dir: '.tmp/docs',
+    entryFileNames: '[name].js',
     format: 'iife',
     sourcemap: false
   },
 
   plugins: [
-    rollupPluginCopyAssets({
-      assets: [
-        'node_modules/@webcomponents/webcomponentsjs/bundles',
-        'node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js',
-        'node_modules/@webcomponents/shadycss/scoping-shim.min.js'
-      ]
-    }),
+    rollupPluginNodeResolve(),
+    rollupPluginCommonjs(),
+    rollupPluginTypescript(),
     rollupPluginBabel({
       babelrc: false,
+      extensions: ['.js', '.mjs', '.ts'],
       ...babelConfigScript
     }),
     rollupPluginTerser(terserConfigMin)
@@ -69,5 +71,5 @@ export const webcomponentsConfig: RollupOptions = {
 };
 
 // tslint:disable-next-line: readonly-array
-const config = [moduleConfig, webcomponentsConfig];
+const config = [moduleConfig, es5AdapterLoader];
 export default config;
