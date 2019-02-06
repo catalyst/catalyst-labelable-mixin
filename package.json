@@ -71,20 +71,17 @@
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-prettier": "^0.6.0",
-    "rollup-plugin-terser": "^4.0.2",
+    "rollup-plugin-terser": "^4.0.4",
     "rollup-plugin-typescript": "^1.0.0",
-    "sort-package-json": "^1.17.1",
-    "terser": "3.14.1",
-    "terser-webpack-plugin": "^1.2.1",
+    "sort-package-json": "^1.19.0",
+    "terser": "3.16.1",
+    "terser-webpack-plugin": "^1.2.2",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.2.4",
     "typescript-tslint-plugin": "^0.3.1",
     "web-component-tester": "^6.9.2",
-    "webpack": "^4.29.0"
-  },
-  "resolutions": {
-    "terser": "3.14.1"
+    "webpack": "^4.29.2"
   }
 }
