@@ -25,6 +25,12 @@ import { minify as minifyHTML } from 'html-minifier';
 import JSON5 from 'json5';
 import { Options as SassOptions, render as renderSassCbf, Result as SassResult } from 'node-sass';
 import { resolve as resolvePath } from 'path';
+import {
+  Analyzer,
+  FsUrlLoader,
+  generateAnalysis as processAnalysis,
+  PackageUrlResolver
+} from 'polymer-analyzer';
 import postcss from 'postcss';
 import { rollup, RollupOptions } from 'rollup';
 import { minify as minifyJS } from 'terser';
@@ -33,6 +39,8 @@ import webpack from 'webpack';
 
 import { minScript as terserConfigScript } from '../config/terser.config.prod';
 import packageJson from '../package.json';
+
+import { glob } from './helpers/util';
 
 const renderSass = promisify<SassOptions, SassResult>(renderSassCbf);
 
@@ -180,31 +188,39 @@ async function compile(production: boolean): Promise<void> {
     })
   );
 
-  const polyfillSrcFiles: ReadonlyArray<string> = [
+  await generateAnalysis(production);
+
+  const polyfills: ReadonlyArray<string> = [
     '@webcomponents/webcomponentsjs/webcomponents-loader.js',
-    '@webcomponents/shadycss/scoping-shim.min.js'
-  ];
-  const polyfillSrcFilesAssets: ReadonlyArray<string> = [
-    '@webcomponents/webcomponentsjs/bundles',
+    '@webcomponents/shadycss/scoping-shim.min.js',
     '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'
   ];
+  const polyfillAssets: ReadonlyArray<string> = [
+    '@webcomponents/webcomponentsjs/bundles'
+  ];
 
-  const polyfillDistFiles = polyfillSrcFiles.map((file) => `vender/${file}`);
+  const polyfillDist = polyfills.map((file) => ({
+    path: `vender/${file}`,
+    // Don't load the following files in the index page. They will be loaded when needed else where.
+    includeInIndex: !([
+      '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'
+    ].includes(file))
+  }));
 
-  const copyPolyfillSrcFileAssets = polyfillSrcFilesAssets.map(async (file) => copy(
+  const copyPolyfillSrcFileAssets = polyfillAssets.map(async (file) => copy(
     resolvePath(process.cwd(), tempFolder, nodeModules, file),
     resolvePath(process.cwd(), docsDistFolder, 'vender/', file)
   ));
 
   if (production) {
     await Promise.all([
-      ...polyfillSrcFiles.map(async (file, i) => {
+      ...polyfills.map(async (file, i) => {
         const js = await readFile(resolvePath(process.cwd(), tempFolder, nodeModules, file), 'utf-8');
 
         const minifiedJS = minifyJS(js, terserConfigScript).code;
 
         await outputFile(
-          resolvePath(process.cwd(), docsDistFolder, polyfillDistFiles[i]),
+          resolvePath(process.cwd(), docsDistFolder, polyfillDist[i].path),
           minifiedJS
         );
       }),
@@ -213,27 +229,44 @@ async function compile(production: boolean): Promise<void> {
     ]);
   } else {
     await Promise.all([
-      ...polyfillSrcFiles.map(async (file, i) => copy(
+      ...polyfills.map(async (file, i) => copy(
         resolvePath(process.cwd(), tempFolder, nodeModules, file),
-        resolvePath(process.cwd(), docsDistFolder, polyfillDistFiles[i])
+        resolvePath(process.cwd(), docsDistFolder, polyfillDist[i].path)
       )),
 
       ...copyPolyfillSrcFileAssets
     ]);
-
   }
+
+  const loadPolyfills = polyfillDist.reduce<ReadonlyArray<string>>(
+    (r, b) => {
+      if (!b.includeInIndex) {
+        return r;
+      }
+
+      return [
+        ...r,
+        b.path
+      ];
+    },
+    []
+  );
+
+  const essentialAssets: ReadonlyArray<string> = [
+    'analysis.json'
+  ];
 
   const css = await compileCSS(production);
   await compileHTML(
     production,
     mainModule,
     mainScript,
-    polyfillDistFiles,
+    loadPolyfills,
     css,
     {
        modules: moduleFiles,
-       scripts: polyfillDistFiles,
-       files: ['analysis.json']
+       scripts: loadPolyfills,
+       json: essentialAssets
     }
   );
 }
@@ -247,24 +280,20 @@ async function compileHTML(
   preloadFiles: {
     readonly modules: ReadonlyArray<string>;
     readonly scripts: ReadonlyArray<string>;
-    readonly files: ReadonlyArray<string>;
+    readonly json: ReadonlyArray<string>;
   }
 ): Promise<void> {
 
-  const modulesPreloadTags = preloadFiles.modules.map((file) => {
-    return `<link rel="modulepreload" href="${file}">`;
-  });
-  const scriptsPreloadTags = preloadFiles.scripts.map((file) => {
-    return `<link rel="preload" href="${file}" as="script">`;
-  });
-  const filesPreloadTags = preloadFiles.files.map((file) => {
-    return `<link rel="preload" href="${file}" as="fetch">`;
-  });
-
   const preloadTags: ReadonlyArray<string> = [
-    ...modulesPreloadTags,
-    ...scriptsPreloadTags,
-    ...filesPreloadTags
+    ...preloadFiles.modules.map((file) => {
+      return `<link rel="modulepreload" href="${file}">`;
+    }),
+    ...preloadFiles.scripts.map((file) => {
+      return `<link rel="preload" href="${file}" as="script">`;
+    }),
+    ...preloadFiles.json.map((file) => {
+      return `<link rel="preload" href="${file}" as="fetch" type="application/json" crossorigin>`;
+    })
   ];
 
   const description = 'Documentation for the the catalyst-labelable-mixin.';
@@ -331,4 +360,27 @@ async function compileCSS(production: boolean): Promise<string> {
   )).css;
 
   return processedCss.replace(/\n/g, '');
+}
+
+async function generateAnalysis(production: boolean): Promise<void> {
+  const analyzer = new Analyzer({
+    urlLoader: new FsUrlLoader('./'),
+    urlResolver: new PackageUrlResolver({
+      packageDir: './'
+    })
+  });
+
+  const files = await glob(`./${libSrcFolder}/**/*.ts`);
+  const analysis = await analyzer.analyze(files);
+  const formattedAnalysis = processAnalysis(analysis, analyzer.urlResolver);
+
+  const analysisFileContents =
+    production
+      ? JSON.stringify(formattedAnalysis)
+      : JSON.stringify(formattedAnalysis, undefined, 2);
+
+  await outputFile(
+    resolvePath(process.cwd(), docsDistFolder, 'analysis.json'),
+    analysisFileContents
+  );
 }

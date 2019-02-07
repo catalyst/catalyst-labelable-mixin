@@ -40,10 +40,11 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
     /**
      * Called when the element is inserted into the DOM.
      */
-    protected connectedCallback(): void {
+    public connectedCallback(): void {
       // @ts-ignore
       if (typeof super.connectedCallback === 'function') {
         // @ts-ignore
+        // tslint:disable-next-line: no-unsafe-any
         super.connectedCallback();
       }
       this._connectLabels();
@@ -52,10 +53,11 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
     /**
      * Called when the element is removed from the DOM.
      */
-    protected disconnectedCallback(): void {
+    public disconnectedCallback(): void {
       // @ts-ignore
       if (typeof super.disconnectedCallback === 'function') {
         // @ts-ignore
+        // tslint:disable-next-line: no-unsafe-any
         super.disconnectedCallback();
       }
       this._disconnectLabels();

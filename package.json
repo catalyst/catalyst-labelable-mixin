@@ -24,7 +24,9 @@
   "scripts": {
     "build": "ts-node -P scripts/tsconfig.json scripts/build.ts",
     "build-docs": "ts-node -P scripts/tsconfig.json scripts/build-docs.ts",
-    "serve": "polyserve --root docs --compile never --module-resolution node --npm --open"
+    "patch": "git apply patches/*",
+    "serve": "polyserve --root docs --compile never --module-resolution node --npm --open",
+    "postinstall": "yarn patch"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

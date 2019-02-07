@@ -124,7 +124,7 @@ function watchElement(
 // tslint:disable-next-line: readonly-array
 ): void {
   // Remove all content but keep the directory so that if you're in it, you don't end up in Trash
-  // await emptyDirectory(paths.getAppBuildPath(process.env.NODE_ENV));
+  //// await emptyDirectory(paths.getAppBuildPath(process.env.NODE_ENV));
 
   const rollupConfigArray: ReadonlyArray<RollupOptions> = Array.isArray(rollupConfig)
     ? rollupConfig
