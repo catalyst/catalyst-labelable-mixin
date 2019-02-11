@@ -1,5 +1,5 @@
 $catalyst-red: #BA2025;
 
-html iron-component-page {
-  --iron-doc-accent-color: #{$catalyst-red};
+html {
+  --iron-component-page-header-color: #{$catalyst-red};
 }
