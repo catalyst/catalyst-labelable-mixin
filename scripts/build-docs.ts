@@ -292,7 +292,7 @@ async function compileHTML(
       return `<link rel="preload" href="${file}" as="script">`;
     }),
     ...preloadFiles.json.map((file) => {
-      return `<link rel="preload" href="${file}" as="fetch" type="application/json" crossorigin>`;
+      return `<link rel="preload" href="${file}" as="fetch" type="application/json" crossorigin="anonymous">`;
     })
   ];
 
