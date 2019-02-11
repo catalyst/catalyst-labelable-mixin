@@ -17,64 +17,59 @@ Install dependencies with:
 yarn
 ```
 
-## Viewing the element
-
-First analyze the projcet then start up the included local webserver:
-
-```sh
-yarn run analyze
-yarn run serve
-```
-
-Then visit http://127.0.0.1:8081/components/@catalyst-elements/catalyst-labelable-mixin to load up un unbuilt version of the docs.
-Select the element and choose a demo to see the element in action.
-
-Please note that as this is an unbuild version of the docs, not all browser will be able to view the page. To view the built version of the docs see [Docs](#docs)
-
 ## Building
 
-The build process will create the following versions of the component in the distribution folder (`./dist`):
-
-* an es6 module version
-* an es5 minified script version
-
-[Gulp](https://gulpjs.com) is used to run the build process.
-
-Build with:
+### Build for development
 
 ```sh
-yarn run build
+yarn build
 ```
+
+The -w flag can be given to watch automatically for changes and rebuild when they are observed.
+
+A built module version of the component will be created in the build folder (`./build`):
+
+### Build for production
+
+```sh
+yarn build -p
+```
+
+The following versions of the component will be created in the distribution folder (`./dist`):
+
+* an es6+ module version
+* an es5 minified script version
 
 ## Coding Style
 
-This project uses [ESLint](http://eslint.org) to lint JavaScript and [Sass Lint](https://github.com/sasstools/sass-lint) to lint Sass.
+This project uses [TSLint](https://palantir.github.io/tslint/) to lint TypeScript and [Sass Lint](https://github.com/sasstools/sass-lint) to lint Sass.
 
 To test if your code is compliant, run:
 
 ```sh
-yarn run lint
+yarn lint
 ```
 
 ## Docs
 
 Note: This repo does not have it's own GitHub pages. Docs are hosted on the [Catalyst Elements Bundle](https://github.com/catalyst/CatalystElements)'s [GitHub pages](https://catalyst.github.io/CatalystElements).
 
-Docs are build with [Polymer](https://www.polymer-project.org), the [Polymer Build Tool](https://github.com/Polymer/polymer-build) and the [Polymer Analyzer](https://github.com/Polymer/polymer-analyzer).
+Docs are displayed using the [iron-component-page](https://www.webcomponents.org/element/@polymer/iron-component-page).
 
-To build the docs, first run the analyzer which will update `./analysis.json`. This file contains all the infomation about the element the docs will use.
+To build the docs:
 
 ```sh
-yarn run analyze
-yarn run build-docs
+yarn build-docs
 ```
+
+The -p flag can be given to build for the production environment.
 
 The docs will be located under `./docs/`.
 
 To view the docs, first start up a local webserver:
 
 ```sh
-yarn run serve
+yarn serve
 ```
 
-Then visit http://127.0.0.1:8081/docs/
+Then visit http://127.0.0.1:8081/
