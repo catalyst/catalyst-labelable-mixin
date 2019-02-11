@@ -4,11 +4,8 @@
 [![David](https://img.shields.io/david/catalyst/catalyst-labelable-mixin.svg?style=flat-square)](https://david-dm.org/catalyst/catalyst-labelable-mixin)
 [![David](https://img.shields.io/david/dev/catalyst/catalyst-labelable-mixin.svg?style=flat-square)](https://david-dm.org/catalyst/catalyst-labelable-mixin?type=dev)
 [![npm (scoped)](https://img.shields.io/npm/v/@catalyst-elements/catalyst-labelable-mixin.svg?style=flat-square)](https://www.npmjs.com/package/@catalyst-elements/catalyst-labelable-mixin)
-[![Bower not supported](https://img.shields.io/badge/bower-not_supported-red.svg?style=flat-square)]()
-[![Polymer 2 not supported](https://img.shields.io/badge/Polymer_2-not_supported-red.svg?style=flat-square)]()
-[![Polymer 3 support pending](https://img.shields.io/badge/Polymer_3-support_pending-yellow.svg?style=flat-square)]()
 
-[API documentation ↗](https://catalyst.github.io/CatalystElementsBundle/#/classes/CatalystLabelableMixin)
+[API documentation ↗](https://catalyst.github.io/CatalystElementsBundle/#/mixins/Labelable)
 
 `<catalyst-labelable-mixin>` is a mixin that provides an element with toggle behavior.
 
@@ -26,16 +23,18 @@ Install with yarn:
 yarn add @catalyst-elements/catalyst-labelable-mixin
 ```
 
-Please note that this package is not compatible with Bower.
-
 ## Usage
 
 ### As a Module (Recommend)
 
 ```js
-import CatalystLabelableMixin from './node_modules/@catalyst-elements/catalyst-labelable-mixin/catalyst-labelable-mixin.js';
+import { catalystLabelableMixin } from '@catalyst-elements/catalyst-labelable-mixin';
 
-class MyLabelableElement extends CatalystLabelableMixin(HTMLElement) {
+export class MyElement extends catalystLabelableMixin(HTMLElement) {
+  static get is() {
+    return 'my-element';
+  }
+
   constructor() {
     super();
     // ...
@@ -45,25 +44,28 @@ class MyLabelableElement extends CatalystLabelableMixin(HTMLElement) {
 }
 ```
 
-### As a Script
-
 ```html
-<script src="node_modules/@catalyst-elements/catalyst-labelable-mixin/catalyst-labelable-mixin.es5.min.js"></script>
-<script>
-  var SuperClass = window.CatalystElements.CatalystLabelableMixin(HTMLElement);
-
-  function MyLabelableElement() {
-    SuperClass.call(this);
-    // ...
-  };
-  MyLabelableElement.prototype = Object.create(SuperClass.prototype);
-  MyLabelableElement.prototype.constructor = MyLabelableElement;
-
-  // ...
-</script>
+<label for="foo">This is my element:</label>
+<my-element id="foo"></my-element>
 ```
 
-Please note that this script has been transpiled to es5 and thus use of `custom-elements-es5-adapter.js` or an equivalent library is required. See [es5 support](https://github.com/catalyst/CatalystElements/wiki/Browser-Compatibility#es5-support) on the Catalyst Elements wiki for details.
+### As a Script (Not Recommend)
+
+```js
+var SuperElement = window.CatalystElements.catalystLabelableMixin(HTMLElement);
+
+function MyElement() {
+  SuperElement.call(this);
+  // ...
+};
+MyElement.prototype = Object.create(SuperElement.prototype);
+MyElement.prototype.constructor = MyElement;
+MyElement.prototype.is = 'my-element';
+window.MyElements = window.MyElements || {};
+window.MyElements.MyElement = MyElement;
+
+// ...
+```
 
 ## Contributions
 
