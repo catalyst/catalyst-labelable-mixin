@@ -25,12 +25,6 @@ import { minify as minifyHTML } from 'html-minifier';
 import JSON5 from 'json5';
 import { Options as SassOptions, render as renderSassCbf, Result as SassResult } from 'node-sass';
 import { resolve as resolvePath } from 'path';
-import {
-  Analyzer,
-  FsUrlLoader,
-  generateAnalysis as processAnalysis,
-  PackageUrlResolver
-} from 'polymer-analyzer';
 import postcss from 'postcss';
 import { rollup, RollupOptions } from 'rollup';
 import { minify as minifyJS } from 'terser';
@@ -39,8 +33,6 @@ import webpack from 'webpack';
 
 import { minScript as terserConfigScript } from '../config/terser.config.prod';
 import packageJson from '../package.json';
-
-import { glob } from './helpers/util';
 
 const renderSass = promisify<SassOptions, SassResult>(renderSassCbf);
 
@@ -51,6 +43,8 @@ const docsSrcFolder = 'docs-src';
 const docsDistFolder = 'docs';
 const libSrcFolder = 'src';
 const libDistFolder = 'dist';
+
+const analysisFile = 'analysis.json';
 
 // Start
 (async (): Promise<void> => {
@@ -188,7 +182,13 @@ async function compile(production: boolean): Promise<void> {
     })
   );
 
-  await generateAnalysis(production);
+  const analysis = await readFile(resolvePath(process.cwd(), tempFolder, analysisFile), 'utf-8');
+  await outputFile(
+    resolvePath(process.cwd(), docsDistFolder, analysisFile),
+    production
+      ? JSON.stringify(JSON5.parse(analysis))
+      : JSON.stringify(JSON5.parse(analysis), undefined, 2)
+  );
 
   const polyfills: ReadonlyArray<string> = [
     '@webcomponents/webcomponentsjs/webcomponents-loader.js',
@@ -253,7 +253,7 @@ async function compile(production: boolean): Promise<void> {
   );
 
   const essentialAssets: ReadonlyArray<string> = [
-    'analysis.json'
+    analysisFile
   ];
 
   const css = await compileCSS(production);
@@ -360,27 +360,4 @@ async function compileCSS(production: boolean): Promise<string> {
   )).css;
 
   return processedCss.replace(/\n/g, '');
-}
-
-async function generateAnalysis(production: boolean): Promise<void> {
-  const analyzer = new Analyzer({
-    urlLoader: new FsUrlLoader('./'),
-    urlResolver: new PackageUrlResolver({
-      packageDir: './'
-    })
-  });
-
-  const files = await glob(`./${libSrcFolder}/**/*.ts`);
-  const analysis = await analyzer.analyze(files);
-  const formattedAnalysis = processAnalysis(analysis, analyzer.urlResolver);
-
-  const analysisFileContents =
-    production
-      ? JSON.stringify(formattedAnalysis)
-      : JSON.stringify(formattedAnalysis, undefined, 2);
-
-  await outputFile(
-    resolvePath(process.cwd(), docsDistFolder, 'analysis.json'),
-    analysisFileContents
-  );
 }

@@ -10,7 +10,7 @@ yarn-error.log
 
 # Docs
 /docs/
-/analysis.json
+/docs-src/auto-analysis.json
 
 # Symlinks
 /catalyst-labelable-mixin.*js

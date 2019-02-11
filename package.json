@@ -24,6 +24,7 @@
   "scripts": {
     "build": "ts-node -P scripts/tsconfig.json scripts/build.ts",
     "build-docs": "ts-node -P scripts/tsconfig.json scripts/build-docs.ts",
+    "generate-auto-analysis": "ts-node -P scripts/tsconfig.json scripts/generate-auto-analysis.ts",
     "patch": "git apply patches/*",
     "serve": "polyserve --root docs --compile never --module-resolution node --npm --open",
     "postinstall": "yarn patch"
