@@ -25,10 +25,37 @@ yarn add @catalyst-elements/catalyst-labelable-mixin
 
 ## Usage
 
-### As a Module (Recommend)
+The recommended way to use any component that's part of the [Catalyst Elements Collection](https://github.com/catalyst/CatalystElements) is to use it as a module. Although a script version of each components is made available, it is not recommended to use it.
+
+### Example
+
+```html
+<!-- index.html -->
+<html>
+<head>
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js" defer></script>
+  <script src="node_modules/@webcomponents/shadycss/scoping-shim.min.js" defer></script>
+  <script type="module" src="main.mjs" defer></script>
+</head>
+<body>
+  <label for="foo">This is my element:</label>
+  <my-element id="foo"></my-element>
+</body>
+</html>
+```
 
 ```js
-import { catalystLabelableMixin } from '@catalyst-elements/catalyst-labelable-mixin';
+// main.mjs
+if (window.WebComponents !== undefined) {
+  window.WebComponents.waitFor(async () => {
+    return import('./my-element.mjs');
+  });
+}
+```
+
+```js
+// my-element.mjs
+import { catalystLabelableMixin } from './node_modules/@catalyst-elements/catalyst-labelable-mixin/catalyst-labelable-mixin.mjs';
 
 export class MyElement extends catalystLabelableMixin(HTMLElement) {
   static get is() {
@@ -42,29 +69,6 @@ export class MyElement extends catalystLabelableMixin(HTMLElement) {
 
   // ...
 }
-```
-
-```html
-<label for="foo">This is my element:</label>
-<my-element id="foo"></my-element>
-```
-
-### As a Script (Not Recommend)
-
-```js
-var SuperElement = window.CatalystElements.catalystLabelableMixin(HTMLElement);
-
-function MyElement() {
-  SuperElement.call(this);
-  // ...
-};
-MyElement.prototype = Object.create(SuperElement.prototype);
-MyElement.prototype.constructor = MyElement;
-MyElement.prototype.is = 'my-element';
-window.MyElements = window.MyElements || {};
-window.MyElements.MyElement = MyElement;
-
-// ...
 ```
 
 ## Contributions
