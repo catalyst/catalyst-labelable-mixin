@@ -1,13 +1,39 @@
 const mixinId = Symbol('CatalystLabelableMixinID');
 
 /**
- * `<catalyst-labelable-mixin>` is a mix in funcation that retruns a class that extends the given super class.
- * The returned class will be the same as the super class except it will also have labelable functionality.
+ * `<catalyst-labelable-mixin>` is a mix in funcation that retruns a class that
+ * extends the given super class. The returned class will be the same as the
+ * super class except it will also have labelable functionality.
  *
- * If this element does not have an id, this mixin's functionality will not be applied.
+ * *Note: If the element this mixin is allpied to does not have an id, this mixin will essentially do nothing.*
+ *
+ * ### Labelable functionality
+ *
+ * Essentially all this means is that the `aria-labelledby` attribute of the
+ * element is configured automatically based on the `label` tags' `for` attribute.
+ *
+ * ### Example
+ *
+ * ```js
+ * import { catalystLabelableMixin } from '@catalyst-elements/catalyst-labelable-mixin';
+ *
+ * export class MyElement extends catalystLabelableMixin(HTMLElement) {
+ *   static get is() {
+ *     return 'my-element';
+ *   }
+ *
+ *   // ...
+ * }
+ * ```
+ *
+ * ```html
+ * <label for="foo">This is my element:</label>
+ * <my-element id="foo"></my-element>
+ * ```
  *
  * @mixinFunction
  * @polymer
+ * @group Catalyst Elements
  *
  * @param mixWith The class to extend/apply this mixin to.
  */
@@ -64,7 +90,7 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
     }
 
     /**
-     * Connect the label events from this element.
+     * Ensure the labels for this element are connected to it correctly.
      */
     protected _connectLabels(): void {
       // No id implies no labels.
@@ -99,14 +125,23 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
     }
 
     /**
-     * Disconnect the label events from this element.
+     * Disconnect all of this element's labels from it.
      */
     protected _disconnectLabels(): void {
-      this.removeAttribute('aria-labelledby');
+      if (this.id !== '') {
+        const rootNode = this.getRootNode();
+        if (!(rootNode instanceof Element)) {
+          return;
+        }
+        const labels = rootNode.querySelectorAll(`label[for="${this.id}"]`);
+        labels.forEach((label) => {
+          label.removeAttribute('for');
+        });
+      }
     }
 
     /**
-     * Generate a new id for a label element.
+     * Generate a new unique id for a label element.
      */
     protected _generateNewLabelId(): string {
       /**
