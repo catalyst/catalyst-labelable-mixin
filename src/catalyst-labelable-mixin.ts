@@ -42,7 +42,7 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
   // Does this class already have this mixin applied?
   // Test this before defining the new class so it isn't made unnecessarily.
   // tslint:disable-next-line: no-any
-  if ((mixWith as any)[mixinId] as boolean) {
+  if (((mixWith as any)[mixinId] as boolean | undefined) === true) {
     return mixWith;
   }
 
