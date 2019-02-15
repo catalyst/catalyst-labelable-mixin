@@ -1,6 +1,6 @@
 {
   "name": "@catalyst-elements/catalyst-labelable-mixin",
-  "version": "0.2.0-rc1",
+  "version": "0.2.0-rc2",
   "description": "A mixin that makes an element labelable.",
   "keywords": [
     "labelable",
