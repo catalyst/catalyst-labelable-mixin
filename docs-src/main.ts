@@ -3,5 +3,5 @@ if (window.WebComponents === undefined) {
 }
 
 window.WebComponents.waitFor(async () => {
-  return import('@polymer/iron-component-page/iron-component-page');
+  return import('@polymer/iron-component-page');
 });

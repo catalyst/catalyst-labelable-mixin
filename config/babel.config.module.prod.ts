@@ -1,6 +1,10 @@
 export default (() => {
-  const presets = [];
-  const plugins = ['@babel/plugin-syntax-dynamic-import', 'babel-plugin-unassert'];
+  // tslint:disable-next-line: no-any
+  const presets: ReadonlyArray<string | [string, any]> = [];
+  const plugins: ReadonlyArray<string> = [
+    '@babel/plugin-syntax-dynamic-import',
+    'babel-plugin-unassert'
+  ];
 
   const retainLines = true;
 

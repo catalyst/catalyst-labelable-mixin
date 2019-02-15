@@ -81,8 +81,6 @@ async function buildProduction(): Promise<void> {
 }
 
 /**
- * Build the element.
- *
  * @param rollupConfig The rollup config file to use.
  * @returns the filenames output.
  */

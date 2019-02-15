@@ -99,6 +99,8 @@ async function prepareDocSrcFiles(): Promise<void> {
   const tsconfigFile = resolvePath(process.cwd(), tempFolder, 'tsconfig.json');
   const tsconfigContent = await readFile(tsconfigFile, 'utf8');
   const tsconfig = JSON5.parse(tsconfigContent);
+
+  // tslint:disable: no-unsafe-any
   const updatedTsconfig = {
     ...tsconfig,
     extends: `../${tsconfig.extends}`,
@@ -109,6 +111,8 @@ async function prepareDocSrcFiles(): Promise<void> {
       return filepath;
     })
   };
+  // tslint:enable: no-unsafe-any
+
   await outputFile(tsconfigFile, JSON.stringify(updatedTsconfig, undefined, 2));
 }
 
@@ -172,8 +176,10 @@ async function compile(production: boolean): Promise<void> {
   const runCompiler = promisify(compiler.run.bind(compiler) as typeof compiler.run);
   const stats = await runCompiler();
 
+  // tslint:disable: no-unsafe-any
   const statsData = stats.toJson('normal');
   const mainScript = statsData.assetsByChunkName.main as string;
+  // tslint:enable: no-unsafe-any
 
   console.info(
     stats.toString({

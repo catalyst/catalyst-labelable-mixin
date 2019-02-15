@@ -2,7 +2,7 @@
  * Terser Config.
  */
 
-import { MinifyOptions } from "terser";
+import { MinifyOptions } from 'terser';
 
 const defaultConfig: Partial<MinifyOptions> = {
   compress: {

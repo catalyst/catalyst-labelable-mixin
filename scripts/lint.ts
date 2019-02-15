@@ -39,6 +39,9 @@ import { transpose } from './helpers/util';
  */
 const severityMaxLength = 'warning'.length;
 
+const tsConfigFileName = 'tsconfig.json';
+const styleLintConfigFileName = '.stylelintrc.json';
+
 // Start
 (async (): Promise<void> => {
   return lint();
@@ -126,10 +129,11 @@ export async function lint(): Promise<void> {
 /**
  * Lint the source files.
  */
+// tslint:disable-next-line: no-identical-functions
 async function lintSrc(ignoreFiles: ReadonlyArray<string>): Promise<LintingResult> {
   console.log('Linting src files...');
-  const tsConfigFile = resolvePath(process.cwd(), 'tsconfig.json');
-  const styleLintFile = resolvePath(process.cwd(), '.stylelintrc.json');
+  const tsConfigFile = resolvePath(process.cwd(), tsConfigFileName);
+  const styleLintFile = resolvePath(process.cwd(), styleLintConfigFileName);
 
   const filesGlobby = [
     'src/**/*.scss'
@@ -148,10 +152,11 @@ async function lintSrc(ignoreFiles: ReadonlyArray<string>): Promise<LintingResul
 /**
  * Lint the doc source files.
  */
+// tslint:disable-next-line: no-identical-functions
 async function lintDocSrc(ignoreFiles: ReadonlyArray<string>): Promise<LintingResult> {
   console.log('Linting doc src files...');
-  const tsConfigFile = resolvePath(process.cwd(), 'docs-src', 'tsconfig.json');
-  const styleLintFile = resolvePath(process.cwd(), '.stylelintrc.json');
+  const tsConfigFile = resolvePath(process.cwd(), 'docs-src', tsConfigFileName);
+  const styleLintFile = resolvePath(process.cwd(), styleLintConfigFileName);
 
   const filesGlobby = [
     'docs-src/**/*.scss'
@@ -170,9 +175,10 @@ async function lintDocSrc(ignoreFiles: ReadonlyArray<string>): Promise<LintingRe
 /**
  * Lint the script files.
  */
+// tslint:disable-next-line: no-identical-functions
 async function lintScripts(ignoreFiles: ReadonlyArray<string>): Promise<LintingResult> {
   console.log('Linting scripts...');
-  const tsConfigFile = resolvePath(process.cwd(), 'scripts', 'tsconfig.json');
+  const tsConfigFile = resolvePath(process.cwd(), 'scripts', tsConfigFileName);
 
   const ts = await lintTs(tsConfigFile, ignoreFiles);
   return { ts };
@@ -181,9 +187,10 @@ async function lintScripts(ignoreFiles: ReadonlyArray<string>): Promise<LintingR
 /**
  * Lint the config files.
  */
+// tslint:disable-next-line: no-identical-functions
 async function lintConfig(ignoreFiles: ReadonlyArray<string>): Promise<LintingResult> {
   console.log('Linting config files...');
-  const tsConfigFile = resolvePath(process.cwd(), 'config', 'tsconfig.json');
+  const tsConfigFile = resolvePath(process.cwd(), 'config', tsConfigFileName);
 
   const ts = await lintTs(tsConfigFile, ignoreFiles);
   return { ts };

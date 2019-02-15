@@ -18,5 +18,8 @@
     "removeComments": true,
     "isolatedModules": false
   },
-  "include": ["**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "../custom_typings/**/*.d.ts"
+  ]
 }
