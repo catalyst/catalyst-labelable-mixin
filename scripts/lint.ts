@@ -131,7 +131,6 @@ export async function lint(): Promise<void> {
   console.log();
   console.log(formatHeading('TypeScript:') + (result.ts.hasErrors ? '\n' : noErrors));
   console.log(result.ts.hasErrors ? `${result.ts.output}\n` : '');
-  console.log();
   console.log(formatHeading('Sass:') + (result.sass.hasErrors ? '\n' : noErrors));
   console.log(result.sass.hasErrors ? `${result.sass.output}\n` : '');
 }
