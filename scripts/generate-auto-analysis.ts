@@ -27,7 +27,7 @@ import {
   PackageUrlResolver
 } from 'polymer-analyzer';
 
-import { glob } from './helpers/util';
+import { glob } from './util';
 
 // Relative to root/cwd.
 const nodeModules = 'node_modules';

@@ -32,7 +32,7 @@ import {
   LintResult as TsLintResult
 } from 'tslint';
 
-import { transpose } from './helpers/util';
+import { transpose } from './util';
 
 /**
  * The maximum length a severity string can be.
