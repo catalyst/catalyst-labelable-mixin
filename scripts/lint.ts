@@ -83,23 +83,35 @@ export async function lint(): Promise<void> {
   ];
 
   const result = lintingResults.reduce((mergedResults, lintingResult) => {
-    const tsOutput =
+    const tsResult =
       lintingResult.ts === undefined
-        ? ''
-        : formatTsLintResult(lintingResult.ts.result).output;
+        ? { hasErrors: false, output: ''}
+        : formatTsLintResult(lintingResult.ts.result);
 
-    const sassOutput =
+    const sassResult =
       lintingResult.sass === undefined
-        ? ''
-        : formatStyleLintResult(lintingResult.sass.result).output;
+        ? { hasErrors: false, output: ''}
+        : formatStyleLintResult(lintingResult.sass.result);
 
     return {
-      ts: `${mergedResults.ts}\n\n${tsOutput}`.trim(),
-      sass: `${mergedResults.sass}\n\n${sassOutput}`.trim()
+      ts: {
+        hasErrors: mergedResults.ts.hasErrors || tsResult.hasErrors,
+        output: `${mergedResults.ts.output}\n\n${tsResult.output}`.trim()
+      },
+      sass: {
+        hasErrors: mergedResults.sass.hasErrors || sassResult.hasErrors,
+        output: `${mergedResults.sass.output}\n\n${sassResult.output}`.trim()
+      }
     };
   }, {
-    ts: '',
-    sass: ''
+    ts: {
+      hasErrors: false,
+      output: ''
+    },
+    sass: {
+      hasErrors: false,
+      output: ''
+    }
   });
 
   const formatHeading =
@@ -112,18 +124,16 @@ export async function lint(): Promise<void> {
         )
       );
 
+  const noErrors = ' No linting issues.';
+
   // Display the output.
   console.log('Linting complete.');
   console.log();
-  console.log(formatHeading('TypeScript:'));
+  console.log(formatHeading('TypeScript:') + (result.ts.hasErrors ? '\n' : noErrors));
+  console.log(result.ts.hasErrors ? `${result.ts.output}\n` : '');
   console.log();
-  console.log(result.ts);
-  console.log();
-  console.log();
-  console.log(formatHeading('Sass:'));
-  console.log();
-  console.log(result.sass);
-  console.log();
+  console.log(formatHeading('Sass:') + (result.sass.hasErrors ? '\n' : noErrors));
+  console.log(result.sass.hasErrors ? `${result.sass.output}\n` : '');
 }
 
 /**
@@ -307,7 +317,7 @@ function formatTsLintResult(result: TsLintResult): LintingOutputResult {
 
   const lintingOutput = getLintingOutput(errorsByFile);
   return {
-    hasErrors: false, // TODO: return correct result.
+    hasErrors: result.failures.length > 0,
     output: lintingOutput
   };
 }
@@ -316,6 +326,9 @@ function formatTsLintResult(result: TsLintResult): LintingOutputResult {
  * Print the result of running stylelint.
  */
 function formatStyleLintResult(result: StyleLinterResult): LintingOutputResult {
+  // tslint:disable-next-line: no-let
+  let hasErrors = false;
+
   const errorsByFile = result.results.reduce<ErrorsByFile>(
     (errors, lintResult) => {
       const filename = lintResult.source;
@@ -332,6 +345,10 @@ function formatStyleLintResult(result: StyleLinterResult): LintingOutputResult {
         readonly severity: string;
         readonly text: string;
       }>);
+
+      if (warnings.length > 0) {
+        hasErrors = true;
+      }
 
       const fileErrors = warnings.map((warning) => ({
           column: warning.column,
@@ -355,7 +372,7 @@ function formatStyleLintResult(result: StyleLinterResult): LintingOutputResult {
 
   const lintingOutput = getLintingOutput(errorsByFile);
   return {
-    hasErrors: false, // TODO: return correct result.
+    hasErrors,
     output: lintingOutput
   };
 }
