@@ -5,11 +5,5 @@
   "rules": {
     "no-import-side-effect": false,
     "no-throw": false
-  },
-  "linterOptions": {
-    "exclude": [
-      "./build/**",
-      "./dist/**"
-    ]
   }
 }
