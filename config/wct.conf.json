@@ -1,0 +1,25 @@
+{
+  "suites": ["test/tests.js"],
+  "plugins": {
+    "local": {
+      "browserOptions": {
+        "chrome": ["headless"],
+        "firefox": ["-headless"]
+      },
+      "browsers": [
+        "chrome",
+        "firefox"
+      ]
+    }
+  },
+  "expanded": true,
+  "npm": true,
+  "compile": "never",
+  "enforceJsonConf": true,
+  "extraScripts": [
+    "/components/mocha/mocha.js",
+    "/components/chai/chai.js",
+    "/test/test-component.js"
+  ],
+  "persistent": true
+}

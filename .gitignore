@@ -2,6 +2,7 @@
 /tmp/
 /build/
 /dist/
+/**/*.js
 
 # Node
 node_modules/
@@ -11,6 +12,3 @@ yarn-error.log
 # Docs
 /docs/
 /docs-src/auto-analysis.json
-
-# Symlinks
-/catalyst-labelable-mixin.*js

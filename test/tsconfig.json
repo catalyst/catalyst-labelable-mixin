@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Coding style
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    // Output
+    "noEmitOnError": true,
+    "module": "commonjs",
+    "target": "es6",
+    "removeComments": true,
+    "isolatedModules": false
+  },
+  "include": [
+    "**/*.ts",
+    "../custom_typings/**/*.d.ts"
+  ]
+}

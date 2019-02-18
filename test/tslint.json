@@ -1,0 +1,14 @@
+{
+  "extends": "../tslint.json",
+  "rules": {
+    "completed-docs": false,
+    "missing-jsdoc": false,
+    "newline-per-chained-call": false,
+    "no-implicit-dependencies": [true, "dev"],
+    "no-inner-html": false,
+    "no-let": false,
+    "no-magic-numbers": false,
+    "no-object-mutation": false,
+    "no-unused-expression": false
+  }
+}
