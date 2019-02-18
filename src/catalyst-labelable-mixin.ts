@@ -99,7 +99,7 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
       }
 
       const rootNode = this.getRootNode();
-      if (!(rootNode instanceof Element)) {
+      if (!(rootNode instanceof Document || rootNode instanceof DocumentFragment || rootNode instanceof Element)) {
         return;
       }
       const labels = rootNode.querySelectorAll(`label[for="${this.id}"]`);
@@ -153,10 +153,9 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
       const uuid = `${1e7}-${1e3}-${4e3}-${8e3}-${1e11}`.replace(/[018]/g, (character) => {
         const digit = Number.parseInt(character, 10);
 
-        // tslint:disable: no-bitwise no-magic-numbers
+        // tslint:disable-next-line: no-bitwise no-magic-numbers
         return (digit ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (digit / 4)))).toString(16);
-        }
-      );
+      });
 
       // Element ids cannot start with a number.
       // Ensure the first character isn't a number by adding a prefix to the UUID.
@@ -176,3 +175,6 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
   // Return the new mixed class.
   return CatalystLabelable;
 };
+
+// tslint:disable-next-line: no-object-mutation
+catalystLabelableMixin.id = mixinId;
