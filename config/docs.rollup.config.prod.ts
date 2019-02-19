@@ -36,7 +36,9 @@ export const moduleConfig: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript(),
+    rollupPluginTypescript({
+      tsconfig: '.tmp/docs/tsconfig.json'
+    }),
     rollupPluginBabel({
       babelrc: false,
       extensions: ['.js', '.mjs', '.ts'],
@@ -60,7 +62,9 @@ export const es5AdapterLoader: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript(),
+    rollupPluginTypescript({
+      tsconfig: '.tmp/docs/tsconfig.json'
+    }),
     rollupPluginBabel({
       babelrc: false,
       extensions: ['.js', '.mjs', '.ts'],

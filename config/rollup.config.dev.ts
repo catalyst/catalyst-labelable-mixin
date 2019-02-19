@@ -28,7 +28,9 @@ export const esmConfig: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript()
+    rollupPluginTypescript({
+      tsconfig: 'tsconfig.json'
+    })
   ]
 };
 

@@ -20,6 +20,5 @@
     "/components/mocha/mocha.js",
     "/components/chai/chai.js",
     "/test/test-component.js"
-  ],
-  "persistent": true
+  ]
 }

@@ -48,7 +48,9 @@ export const componentConfig: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript(),
+    rollupPluginTypescript({
+      tsconfig: 'tsconfig.json'
+    }),
     rollupPluginBabel({
       babelrc: false,
       extensions: ['.js', '.mjs', '.ts'],

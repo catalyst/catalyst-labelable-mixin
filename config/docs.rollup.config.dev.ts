@@ -27,7 +27,9 @@ export const moduleConfig: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript()
+    rollupPluginTypescript({
+      tsconfig: '.tmp/docs/tsconfig.json'
+    })
   ]
 };
 

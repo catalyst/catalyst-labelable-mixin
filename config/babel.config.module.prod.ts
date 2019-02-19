@@ -1,6 +1,8 @@
 export default (() => {
   // tslint:disable-next-line: no-any
-  const presets: ReadonlyArray<string | [string, any]> = [];
+  const presets: ReadonlyArray<string | [string, any]> = [
+    '@babel/preset-typescript'
+  ];
   const plugins: ReadonlyArray<string> = [
     '@babel/plugin-syntax-dynamic-import',
     'babel-plugin-unassert'

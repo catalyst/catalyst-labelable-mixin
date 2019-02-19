@@ -46,7 +46,9 @@ export const esmConfig: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript(),
+    rollupPluginTypescript({
+      tsconfig: 'tsconfig.json'
+    }),
     rollupPluginBabel({
       babelrc: false,
       extensions: ['.js', '.mjs', '.ts'],
@@ -76,7 +78,9 @@ export const iifeConfig: RollupOptions = {
   plugins: [
     rollupPluginNodeResolve(),
     rollupPluginCommonjs(),
-    rollupPluginTypescript(),
+    rollupPluginTypescript({
+      tsconfig: 'tsconfig.json'
+    }),
     rollupPluginBabel({
       babelrc: false,
       extensions: ['.js', '.mjs', '.ts'],

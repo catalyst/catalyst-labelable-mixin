@@ -7,19 +7,23 @@
 
 [API documentation ↗](https://catalyst.github.io/CatalystElementsBundle/#/mixins/Labelable)
 
-`<catalyst-labelable-mixin>` is a mixin that provides an element with toggle behavior.
+`<catalyst-labelable-mixin>` is a mixin function that retruns a class that
+extends the given super class. The returned class will be the same as the
+super class except it will also have labelable functionality.
+
+*Note: If the element this mixin is applied to does not have an id, this mixin will essentially do nothing.*
+
+**Labelable functionality:**  
+Essentially all this means is that the `aria-labelledby` attribute of the
+element is configured automatically based on the label tags' `for` attribute.
 
 ## Installation
 
-Install with npm:
-
 ```sh
+# Install with npm:
 npm install --save @catalyst-elements/catalyst-labelable-mixin
-```
 
-Install with yarn:
-
-```sh
+# Install with yarn:
 yarn add @catalyst-elements/catalyst-labelable-mixin
 ```
 

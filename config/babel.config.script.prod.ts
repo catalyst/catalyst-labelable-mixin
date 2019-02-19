@@ -3,7 +3,8 @@ export default (() => {
   const presets: ReadonlyArray<string | [string, any]> = [
     ['@babel/preset-env', {
       useBuiltIns: 'usage'
-    }]
+    }],
+    '@babel/preset-typescript'
   ];
   const plugins: ReadonlyArray<string> = [
     '@babel/plugin-syntax-dynamic-import',
