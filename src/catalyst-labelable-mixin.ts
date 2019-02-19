@@ -1,16 +1,17 @@
 const mixinId = Symbol('CatalystLabelableMixinID');
 
 /**
- * `<catalyst-labelable-mixin>` is a mix in funcation that retruns a class that
+ * `<catalyst-labelable-mixin>` is a mixin function that retruns a class that
  * extends the given super class. The returned class will be the same as the
  * super class except it will also have labelable functionality.
  *
- * *Note: If the element this mixin is allpied to does not have an id, this mixin will essentially do nothing.*
+ * *Note: If the element this mixin is applied to does not have an id, this
+ * mixin will essentially do nothing.*
  *
  * ### Labelable functionality
  *
  * Essentially all this means is that the `aria-labelledby` attribute of the
- * element is configured automatically based on the `label` tags' `for` attribute.
+ * element is configured automatically based on the label tags' `for` attribute.
  *
  * ### Example
  *
@@ -56,11 +57,18 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
     public readonly [mixinId]: true;
 
     /**
+     * This element's labels.
+     */
+    // tslint:disable-next-line: readonly-keyword
+    private _labels: ReadonlyArray<HTMLElement>;
+
+    /**
      * Construct the mixin.
      */
     public constructor() {
       super();
       this[mixinId] = true;
+      this._labels = [];
     }
 
     /**
@@ -102,11 +110,19 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
       if (!(rootNode instanceof Document || rootNode instanceof DocumentFragment || rootNode instanceof Element)) {
         return;
       }
-      const labels = rootNode.querySelectorAll(`label[for="${this.id}"]`);
 
-      if (labels.length > 0) {
+      // tslint:disable-next-line: no-object-mutation
+      this._labels = Array.from(
+        // tslint:disable-next-line: no-unnecessary-type-assertion
+        rootNode.querySelectorAll(`[for="${this.id}"]`) as NodeListOf<HTMLElement>
+      )
+        .filter((label) =>
+          label.tagName === 'LABEL' || label.getAttribute('role') === 'label'
+        );
+
+      if (this._labels.length > 0) {
         const labelledByIds = Array
-          .from(labels)
+          .from(this._labels)
           .reduce<ReadonlyArray<string>>((labelIds, label) => {
             // Labels must have an id for `aria-labelledby`.
             if (label.id === '') {
@@ -170,11 +186,23 @@ export const catalystLabelableMixin = (mixWith: new() => HTMLElement): (new() =>
       // Id isn't unique? Generate a new one.
       return this._generateNewLabelId();
     }
+
+    /**
+     * The labels attached to this element.
+     */
+    public get labels(): Array<HTMLElement> {
+      return [
+        ...this._labels
+      ];
+    }
   }
 
   // Return the new mixed class.
   return CatalystLabelable;
 };
 
-// tslint:disable-next-line: no-object-mutation
-catalystLabelableMixin.id = mixinId;
+// Make the id symbol accessible.
+Object.defineProperty(catalystLabelableMixin, 'id', {
+  value: mixinId,
+  writable: false
+});
