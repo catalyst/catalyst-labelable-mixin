@@ -1,7 +1,7 @@
 if (window.WebComponents === undefined) {
-  throw new Error('WebComponents not defined.');
+  console.error(new Error('WebComponents not defined.'));
+} else {
+  window.WebComponents.waitFor(async () => {
+    return import('@polymer/iron-component-page');
+  });
 }
-
-window.WebComponents.waitFor(async () => {
-  return import('@polymer/iron-component-page');
-});

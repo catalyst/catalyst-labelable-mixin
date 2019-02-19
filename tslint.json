@@ -1,9 +1,5 @@
 {
   "extends": [
     "@rebeccastevens/tslint-rebeccastevens/ruleset-recommended"
-  ],
-  "rules": {
-    "no-import-side-effect": false,
-    "no-throw": false
-  }
+  ]
 }
