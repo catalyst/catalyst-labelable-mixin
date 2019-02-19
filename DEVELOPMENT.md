@@ -42,7 +42,7 @@ The following versions of the component will be created in the distribution fold
 
 ## Coding Style
 
-This project uses [TSLint](https://palantir.github.io/tslint/) to lint TypeScript and [Sass Lint](https://github.com/sasstools/sass-lint) to lint Sass.
+This project uses [TSLint](https://palantir.github.io/tslint/) to lint TypeScript and [Stylelint](https://stylelint.io/) to lint Sass.
 
 To test if your code is compliant, run:
 
