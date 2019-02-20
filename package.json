@@ -30,7 +30,7 @@
     "patch": "git apply patches/*",
     "serve": "polyserve --root docs --compile never --module-resolution node --npm --open",
     "test": "ts-node -P scripts/tsconfig.json scripts/test.ts",
-    "postinstall": "yarn patch"
+    "postinstall": "yarn patch || :"
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
