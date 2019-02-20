@@ -3,11 +3,9 @@
   "plugins": {
     "local": {
       "browserOptions": {
-        "chrome": ["headless"],
         "firefox": ["-headless"]
       },
       "browsers": [
-        "chrome",
         "firefox"
       ]
     }
