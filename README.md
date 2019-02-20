@@ -8,14 +8,18 @@
 [API documentation ↗](https://catalyst.github.io/CatalystElementsBundle/#/mixins/Labelable)
 
 `<catalyst-labelable-mixin>` is a mixin function that retruns a class that
-extends the given super class. The returned class will be the same as the
-super class except it will also have labelable functionality.
+extends the given super class. The returned class will be the same as the super
+class except it will also have labelable functionality.
 
-*Note: If the element this mixin is applied to does not have an id, this mixin will essentially do nothing.*
+*Note: If the element this mixin is applied to does not have an id, this mixin
+will essentially do nothing.*
 
 **Labelable functionality:**  
 Essentially all this means is that the `aria-labelledby` attribute of the
 element is configured automatically based on the label tags' `for` attribute.
+
+*Note: Labels must either use the tag `<label>` or have the attribute
+`role="label"`.*
 
 ## Installation
 
