@@ -2,39 +2,22 @@
   "schema_version": "1.0.0",
   "mixins": [
     {
-      "description": "`<catalyst-labelable-mixin>` is a mixin function that retruns a class that\nextends the given super class. The returned class will be the same as the\nsuper class except it will also have labelable functionality.\n\n*Note: If the element this mixin is applied to does not have an id, this\nmixin will essentially do nothing.*\n\n### Labelable functionality\n\nEssentially all this means is that the `aria-labelledby` attribute of the\nelement is configured automatically based on the label tags' `for` attribute.\n\n### Example\n\n```js\nimport { catalystLabelableMixin } from '@catalyst-elements/catalyst-labelable-mixin';\n\nexport class MyElement extends catalystLabelableMixin(HTMLElement) {\n  static get is() {\n    return 'my-element';\n  }\n\n  // ...\n}\n```\n\n```html\n<label for=\"foo\">This is my element:</label>\n<my-element id=\"foo\"></my-element>\n```",
-      "summary": "",
+      "description": "`<catalyst-labelable-mixin>` is a mixin function that retruns a class that\nextends the given super class. The returned class will be the same as the\nsuper class except it will also have labelable functionality.\n\n*Note: If the element this mixin is applied to does not have an id, this\nmixin will essentially do nothing.*\n\n### Labelable functionality\n\nEssentially all this means is that the `aria-labelledby` attribute of the\nelement is configured automatically based on the label tags' `for` attribute.\n\n*Note: Labels must either use the tag `<label>` or have the attribute\n`role=\"label\"`.*\n\n### Example\n\n```js\nimport { catalystLabelableMixin } from '@catalyst-elements/catalyst-labelable-mixin';\n\nexport class MyElement extends catalystLabelableMixin(HTMLElement) {\n  static get is() {\n    return 'my-element';\n  }\n\n  // ...\n}\n```\n\n```html\n<label for=\"foo\">This is my element:</label>\n<my-element id=\"foo\"></my-element>\n```\n\n### Extra Notes\n\n#### `instanceof` can be used to test if a given element has this mixin applied.\n\nUsing the example above:\n\n```js\nMyElement instanceof catalystLabelableMixin // === true\n```",
+      "summary": "Makes an element labelable.",
       "path": "@catalyst-elements/catalyst-labelable-mixin/catalyst-labelable-mixin.mjs",
       "properties": [
         {
-          "name": "[catalystLabelableMixin.id]",
-          "type": "true",
-          "description": "States that this mixin has been applied to the element.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 154,
-              "column": 8
-            },
-            "end": {
-              "line": 156,
-              "column": 5
-            }
-          },
-          "metadata": {}
-        },
-        {
           "name": "labels",
           "type": "Array<HTMLElement>",
-          "description": "The labels attached to this element.",
+          "description": "The labels that are currently attached to this element.\n     ",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 161,
+              "line": 71,
               "column": 8
             },
             "end": {
-              "line": 163,
+              "line": 73,
               "column": 5
             }
           },
@@ -43,16 +26,16 @@
       ],
       "methods": [
         {
-          "name": "_connectLabels",
-          "description": "Ensure the labels for this element are connected to it correctly.",
-          "privacy": "protected",
+          "name": "updateLabels",
+          "description": "Update the list of labels that are for this element.\n\nNote: There is no need to call this method before accessing the `labels`\nproperty.",
+          "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 74,
+              "line": 95,
               "column": 8
             },
             "end": {
-              "line": 108,
+              "line": 97,
               "column": 5
             }
           },
@@ -63,21 +46,83 @@
           }
         },
         {
-          "name": "_disconnectLabels",
-          "description": "Disconnect all of this element's labels from it.",
-          "privacy": "protected",
+          "name": "_getLabels",
+          "description": "Update the list of labels that are for this element.\n\nNote: There is no need to call this method before accessing the `labels`\nproperty.",
+          "privacy": "private",
           "sourceRange": {
             "start": {
-              "line": 111,
+              "line": 103,
               "column": 8
             },
             "end": {
-              "line": 122,
+              "line": 107,
               "column": 5
             }
           },
           "metadata": {},
           "params": [],
+          "return": {
+            "type": "Array<HTMLElement>"
+          }
+        },
+        {
+          "name": "_disconnectLabels",
+          "description": "Disconnect all of this element's labels from it.",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 110,
+              "column": 8
+            },
+            "end": {
+              "line": 115,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "void"
+          }
+        },
+        {
+          "name": "_getLabelsGetTags",
+          "description": "Get the label tags for this element.",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 118,
+              "column": 8
+            },
+            "end": {
+              "line": 137,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": []
+        },
+        {
+          "name": "_updateAriaLablledby",
+          "description": "Update the aria-labelledby attribute.",
+          "privacy": "private",
+          "sourceRange": {
+            "start": {
+              "line": 140,
+              "column": 8
+            },
+            "end": {
+              "line": 153,
+              "column": 5
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "labels",
+              "type": "Array<HTMLElement>"
+            }
+          ],
           "return": {
             "type": "void"
           }
@@ -88,16 +133,19 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 125,
+              "line": 156,
               "column": 8
             },
             "end": {
-              "line": 151,
+              "line": 182,
               "column": 5
             }
           },
           "metadata": {},
-          "params": []
+          "params": [],
+          "return": {
+            "type": "string"
+          }
         }
       ],
       "staticMethods": [],
@@ -105,11 +153,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 39,
+          "line": 53,
           "column": 4
         },
         "end": {
-          "line": 160,
+          "line": 186,
           "column": 2
         }
       },

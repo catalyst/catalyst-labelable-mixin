@@ -32,9 +32,8 @@ describe('Basics', () => {
       expect(element, 'Couldn\'t create element').to.be.ok;
     });
 
-    it('has its mixin symbol applied', () => {
-      expect(catalystLabelableMixin.id, 'Symbol should exist').to.be.a('symbol');
-      expect(element[catalystLabelableMixin.id], 'Symbol should be applied to element').to.be.true;
+    it('can be instanceof\'ed', () => {
+      expect(element instanceof catalystLabelableMixin, 'Element should be an instance of mixin').to.be.true;
     });
   });
 
