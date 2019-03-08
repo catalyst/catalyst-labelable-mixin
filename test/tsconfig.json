@@ -8,13 +8,14 @@
     "noImplicitThis": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "strictNullChecks": false,
 
     // Output
-    "noEmitOnError": true,
-    "module": "commonjs",
+    "noEmitOnError": false,
+    "module": "es2015",
     "target": "es6",
-    "removeComments": true,
-    "isolatedModules": false
+    "isolatedModules": false,
+    "outDir": "dist"
   },
   "include": [
     "**/*.ts",

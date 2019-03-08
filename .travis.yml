@@ -5,8 +5,10 @@ node_js:
   - stable
 dist: xenial
 sudo: required
+services:
+  - xvfb
 addons:
-  # chrome: stable
+  chrome: stable
   firefox: latest
 cache:
   yarn: true
@@ -18,6 +20,8 @@ before_install:
   - export PATH=$HOME/.yarn/bin:$PATH
 install:
   - yarn
+before_script:
+  - yarn build
 script:
   - yarn lint
-  - yarn test
+  - xvfb-run -a yarn test

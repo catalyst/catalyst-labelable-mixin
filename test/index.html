@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--
+  This file is used to run the tests in the browser.
+  Test fixtures are decleared in the <body>.
+  It is unlikely that you will need to ever change anything in the <head>.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tests</title>
+
+    <link rel="stylesheet" href="/components/mocha/mocha.css">
+
+    <!-- load the scripts needed to run the WCT.  -->
+    <script src="/components/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="/components/mocha/mocha.js"></script>
+    <script src="/components/chai/chai.js"></script>
+    <script src="/components/@polymer/test-fixture/test-fixture.js"></script>
+    <script src="/components/@polymer/test-fixture/test-fixture-mocha.js"></script>
+    <script src="/components/wct-mocha/wct-mocha.js"></script>
+    <script src="/components/accessibility-developer-tools/dist/js/axs_testing.js"></script>
+    <script src="/components/web-component-tester/data/a11ySuite.js"></script>
+
+    <!-- Load the tests once everything else is done. -->
+    <script type="module" defer>WCT.loadSuites(['index.js']);</script>
+  </head>
+
+  <body>
+    <!-- Test Fixtures. -->
+    <test-fixture id="unlabelled">
+      <template>
+        <test-element id="element"></test-element>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="labelled">
+      <template>
+        <label for="element" id="label">Label</label>
+        <test-element id="element"></test-element>
+      </template>
+    </test-fixture>
+  </body>
+</html>

@@ -9,7 +9,7 @@
         {
           "name": "labels",
           "type": "Array<HTMLElement>",
-          "description": "The labels that are currently attached to this element.\n     ",
+          "description": "The labels that are currently attached to this element.",
           "privacy": "public",
           "sourceRange": {
             "start": {

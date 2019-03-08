@@ -1,14 +1,19 @@
-/.tmp/
-/tmp/
-/build/
-/dist/
-/**/*.js
+# Dist
+/lib
+
+# Temp
+.tmp/
+**/*.js
+**/*.mjs
+
+# Docs
+/docs/
+/auto-analysis.json
 
 # Node
 node_modules/
 npm-debug.log
 yarn-error.log
 
-# Docs
-/docs/
-/docs-src/auto-analysis.json
+# Cache
+.rpt2_cache

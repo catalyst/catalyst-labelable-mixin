@@ -33,7 +33,6 @@
     ]
   },
   "include": [
-    "src/**/*.ts",
-    "custom_typings/**/*.d.ts"
+    "src/**/*.ts"
   ]
 }
